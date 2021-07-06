@@ -1,4 +1,3 @@
-require('dotenv').config();
 const express = require('express')
 const cors = require('cors')
 const connectDb = require('./models/index') 
@@ -6,8 +5,11 @@ const productRoutes = require('./routes/productRoute')
 const authRoutes = require('./routes/authRoute')
 const errorHandlers = require('./handlers/error')
 const bodyParser = require('body-parser')
+const dotenv = require('dotenv')
 const app = express()
 const PORT = process.env.PORT || 8081;
+
+dotenv.config();
 
 
 connectDb()

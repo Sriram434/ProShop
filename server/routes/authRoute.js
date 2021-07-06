@@ -3,7 +3,7 @@ const router = express.Router()
 const {signIn, signUp} = require('../handlers/auth')
 const {loginRequired, correctUser } = require('../middleware/auth')
 
-router.post('/signup', signUp)
-router.post('/login', loginRequired, signIn)
+router.route('/').post(signUp)
+router.post('/login', signIn)
 
 module.exports = router

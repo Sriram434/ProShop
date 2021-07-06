@@ -21,10 +21,8 @@ const signIn = asyncHandler(async(req,res,next) => {
 			token
 		})
 	} else{
-		return next({
-				status: 401,
-				message: 'invalid Email / Password'
-			})
+		res.status(401)
+    	throw new Error('Invalid email or password')
 	}
 })
 
@@ -46,6 +44,7 @@ const signUp = async function(req, res, next){
 	}
 	catch(err){
 		//If Validation fails
+		console.log(res.err)
 		if(err.code === 11000){
 			err.message = 'Email / Username is already taken'	
 		}
