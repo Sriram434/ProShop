@@ -1,15 +1,16 @@
 import {combineReducers} from 'redux';
 import {productListReducer,productDetailReducer } from './products'
 import {cartReducer} from './cart'
-import {userLoginReducer, userRegisterReducer} from './currentUser'
+import {userLoginReducer, userRegisterReducer, userDetailsReducer} from './currentUser'
 
 const cartItemsFromStorage = localStorage.getItem('cartItems') ? JSON.parse(localStorage.getItem('cartItems')) : []
+
 
 const userInfoFromStorage = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : null
 
 const initialState = {
 	cart: {cartItems: cartItemsFromStorage },
-	user: {userInfo: userInfoFromStorage }
+	userLogin: {userInfo: userInfoFromStorage }
 }
 
 const rootReducer = combineReducers({
@@ -18,6 +19,7 @@ const rootReducer = combineReducers({
 	cartReducer,
 	userLoginReducer,
 	userRegisterReducer,
+	userDetailsReducer,
 	initialState
 })
 

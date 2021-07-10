@@ -10,7 +10,9 @@ const signIn = asyncHandler(async(req,res,next) => {
 	
 	if(user && (await user.matchPassword(password))){
 		let token = jwt.sign({
-				id: user._id
+				id,
+				username,
+				email
 			}, process.env.SECRET_KEY);
 
 		res.status(200).json({
@@ -44,7 +46,6 @@ const signUp = async function(req, res, next){
 	}
 	catch(err){
 		//If Validation fails
-		console.log(res.err)
 		if(err.code === 11000){
 			err.message = 'Email / Username is already taken'	
 		}
@@ -55,4 +56,47 @@ const signUp = async function(req, res, next){
 	}
 }
 
-module.exports = {signIn, signUp}
+//Get user profile -  /api/users/profile
+const getUserProfile = async function(req,res){
+	const user = await User.findById(req.user._id)
+	
+	if(user){
+		res.json({
+			_id: user._id,
+			name: user.name,
+			email: user.email,
+			isAdmin: user.isAdmin,
+		})
+	}else{
+		res.status(404)
+		throw new Error('user not found')
+	}
+}
+
+//Update user profile -  /api/users/profile
+const updateUserProfile = async function(req,res){
+	const user = await User.findById(req.user._id)
+	
+	if(user){
+		user.name = req.body.name || user.name
+		user.email = req.body.email || user.email
+		
+		if(req.body.password){
+			user.password = req.body.password
+		}
+		
+		const updateUser = await user.save() 
+		
+		res.json({
+			_id: updateUser._id,
+			name: updateUser.name,
+			email: updateUser.email,
+			isAdmin: updateUser.isAdmin,
+		})
+	}else{
+		res.status(404)
+		throw new Error('user not found')
+	}
+}
+
+module.exports = {signIn, signUp, getUserProfile, updateUserProfile}

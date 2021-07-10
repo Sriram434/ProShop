@@ -5,9 +5,9 @@ import {useDispatch, useSelector} from 'react-redux'
 import FormContainer from '../components/FormContainer'
 import Message from '../components/messageAlert'
 import Loader from '../components/loader'
-import {register} from '../store/actions/auth'
+import {getUserDetails} from '../store/actions/auth'
 
-const RegisterScreen = ({location,history}) => {
+const ProfileScreen = ({location,history}) => {
 	const [name, setName] = useState('')
 	const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
@@ -17,30 +17,41 @@ const RegisterScreen = ({location,history}) => {
   const dispatch = useDispatch()
   
 //Getting the details from reducer
-  const userRegister = useSelector((state) => state.userRegisterReducer)
-  const { loading, error, userInfo } = userRegister
-
-  const redirect = location.search ? location.search.split('=')[1] : '/'
+  const userDetails = useSelector((state) => state.userDetailsReducer)
+  const { loading, error, user } = userDetails
+  
+  //Getting the user login  details from reducer
+  const userLogin = useSelector((state) => state.userLoginReducer)
+  const { userInfo } = userLogin
 
  //Redirecting if user if already logged in
   useEffect(() => {
-	  if(userInfo){
-		  history.push(redirect)
+	  if(!userInfo){
+		  history.push('/login')
+	  }else{
+		  //if no changes dispatching the action 
+		  if(!user.name){
+			  dispatch(getUserDetails('profile'))
+		  }else{
+			  setName(user.name)
+			  setEmail(user.email)
+		  }
 	  }
-  }, [history, userInfo, redirect])	
+  }, [dispatch, history ,userInfo, user])	
 	
   const submitHandler = (e) => {
     e.preventDefault()
 	  if(password !== confirmPassword){
 		setMessage('Password doesnot match')
 	  } else{
-		 dispatch(register(name, email, password))
+		  //Dispacth
 	  }    
   }
 	
 	return(
-		<FormContainer>
-			<h1> Sign Up </h1>
+		<Row>
+			<Col md={3} >
+				<h2> User Profile </h2>
 			{message && <Message variant='danger'>{message}</Message> } 
 			{error && <Message variant='danger'>{error}</Message> } 
 			{loading && <Loader/> }
@@ -81,18 +92,17 @@ const RegisterScreen = ({location,history}) => {
 						onChange={(e) => setConfirmPassword(e.target.value) }></Form.Control>
 				</Form.Group>
 				
-				<Button type='submit' variant='primary'>Register </Button>
+				<Button type='submit' variant='primary'> Update </Button>
 			</Form>
+			</Col>
 			
-			<Row className='py-3'>
-				<Col>
-					Have an Account  ?  {' '}
-					<Link to={redirect ? `/login?redirect=${redirect}` : `/login`}>	
-						 Login </Link>
-				</Col>
-			</Row>
-		</FormContainer>
+			<Col md={9}>
+				<h3>My order details </h3>
+			</Col>
+			
+			
+		</Row>
 	)
 }
 
-export default RegisterScreen;
+export default ProfileScreen;
